@@ -1,0 +1,35 @@
+//Button-Controlled FSM System 
+`timescale 1ns/1ns
+module button_controller_fsm_tb;
+  reg clk;
+  reg rst;
+  reg btn;
+  wire led;
+  wire [1:0] state;
+  button_controller_fsm uut (.clk(clk),.rst(rst),.btn(btn),.led(led),.state(state));
+  always #5 clk = ~clk;
+  initial 
+    begin
+      clk = 0;
+      rst = 1;
+      btn = 0;
+      #12 rst = 0;
+      #8  btn = 1; 
+      #4 btn = 0;
+      #20 btn = 1; 
+      #4 btn = 0;
+      #20 btn = 1; 
+      #4 btn = 0;
+      #20 btn = 1; 
+      #4 btn = 0;
+      #40 $finish;
+  end
+  always @(posedge clk) begin
+    case (state)
+      2'b00: $display("t=%0t | STATE=OFF  | led=%b",  $time, led);
+      2'b01: $display("t=%0t | STATE=LOW  | led=%b",  $time, led);
+      2'b10: $display("t=%0t | STATE=MID  | led=%b",  $time, led);
+      2'b11: $display("t=%0t | STATE=HIGH | led=%b",  $time, led);
+    endcase
+  end
+endmodule
