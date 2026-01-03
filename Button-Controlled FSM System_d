@@ -1,0 +1,28 @@
+//Button-Controlled FSM System 
+module button_controller_fsm (input clk,input rst,input btn,output reg [1:0] state,output reg led);
+  localparam OFF  = 2'b00,LOW  = 2'b01,MID  = 2'b10,HIGH = 2'b11;
+  reg [1:0] next_state;
+  always @(posedge clk or posedge rst) begin
+    if (rst)
+      state <= OFF;
+    else
+      state <= next_state;
+  end
+  always @(*) begin
+    next_state = state;  
+    if (btn) begin
+      case (state)
+        OFF:  next_state = LOW;
+        LOW:  next_state = MID;
+        MID:  next_state = HIGH;
+        HIGH: next_state = OFF;
+      endcase
+    end
+  end
+  always @(*) begin
+    if (state == OFF)
+      led = 1'b0;
+    else
+      led = 1'b1;
+  end
+endmodule
