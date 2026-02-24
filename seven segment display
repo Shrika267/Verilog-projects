@@ -1,0 +1,57 @@
+module seven_seg (input [2:0]A,
+ input [2:0]B,
+ input cin,
+ output [6:0]seg);
+wire [3:0]Sum;
+tba tba1(.A(A), .B(B), .cin(cin), .Sum(Sum));
+decoder d(.in(Sum), .seg(seg));
+endmodule
+
+module ha(input a,b, output sum, carry);
+assign sum=a^b;
+assign carry=a&b;
+endmodule
+
+module fa(input a,b,cin, output sum,cout);
+wire s1,c1,c2;
+ha ha1(a,b,s1,c1);
+ha ha2(s1,cin,sum,c2);
+assign cout=c1|c2;
+endmodule
+
+module tba(input [2:0]A,
+ input [2:0]B,
+ input cin,
+ output [3:0]Sum);
+wire c1,c2,c3;
+fa fa1(A[0], B[0], cin, Sum[0], c1);
+fa fa2(A[1], B[1], c1, Sum[1], c2);
+fa fa3(A[2], B[2], c2, Sum[2],c3);
+assign Sum[3]=c3;
+endmodule
+
+module decoder(input [3:0]in, output reg [6:0]seg);
+always @(*)
+begin
+case(in)
+4'h0: seg=7'b1000000;
+4'h1: seg=7'b1111001;
+4'h2: seg=7'b0100100;
+4'h3: seg=7'b0110000;
+4'h4: seg=7'b0011001;
+4'h5: seg=7'b0010010;
+4'h6: seg=7'b0000010;
+4'h7: seg=7'b1111000;
+4'h8: seg=7'b0000000;
+4'h9: seg=7'b0010000;
+4'hA: seg=7'b0001000;
+4'hb: seg=7'b0000011;
+4'hC: seg=7'b1000110;
+4'hd: seg=7'b0100001;
+4'hE: seg=7'b0000110;
+4'hF: seg=7'b0001110;
+default: seg=7'b1111111;
+endcase
+end
+endmodule
+
