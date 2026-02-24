@@ -1,0 +1,37 @@
+module cla(input [3:0]a,b,
+			  output[3:0]S,
+			  output cout);
+wire [3:0] c;
+lac L1(a,b,cin,c);
+fa F0(a[0],b[0],cin,S[0],);
+fa F1(a[1],b[1],c[0],S[1],);
+fa F2(a[2],b[2],c[1],S[2],);
+fa F3(a[3],b[3],c[2],S[3],cout);
+endmodule
+
+module fa(input a,b,cin, output sum, carry);
+wire w1,w2,w3;
+xor g1(w1,a,b);
+and g2(w2,cin,w1);
+and g3(w3,a,b);
+xor g4(sum,w1,cin);
+or g5(carry,w2,w3);
+endmodule
+
+module lac(input [3:0]a,b,
+			  input cin,
+			  output [3:0]c);
+wire [3:0]g,p;
+assign g[0]=a[0]&b[0];
+assign g[1]=a[1]&b[0];
+assign g[2]=a[2]&b[2];
+assign g[3]=a[3]&b[3];
+assign p[0]=a[0]^b[0];
+assign p[1]=a[1]^b[1];
+assign p[2]=a[2]^b[2];
+assign p[3]=a[3]^b[3];
+assign c[0]=g[0]|(p[0]&cin);
+assign c[1]=g[1]|(p[1]&c[0]);
+assign c[2]=g[2]|(p[2]&c[1]);
+assign c[3]=g[3]|(p[3]&c[2]);
+endmodule
