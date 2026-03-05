@@ -1,0 +1,72 @@
+`timescale 1ns/1ps
+
+module dljkff(
+    input a,
+    input trigger,
+    output reg q1,
+    output reg q2
+);
+
+// JK Flip-Flop (J = K = A)
+always @(posedge trigger)
+begin
+    if (a == 1'b1)
+        q1 <= ~q1;   // toggle
+end
+
+// D Latch (active LOW enable)
+always @(q1 or trigger)
+begin
+    if (trigger == 1'b0)
+        q2 <= q1;
+end
+
+endmodule
+
+
+module dljkff_tb;
+
+reg a;
+reg trigger;
+wire q1;
+wire q2;
+
+// Instantiate the design
+dljkff uut (
+    .a(a),
+    .trigger(trigger),
+    .q1(q1),
+    .q2(q2)
+);
+
+initial
+begin
+    // initialize signals
+    a = 0;
+    trigger = 0;
+
+    // initialize flip-flop outputs
+    uut.q1 = 0;
+    uut.q2 = 0;
+
+    // change A values
+    #10 a = 1;
+    #20 a = 1;
+    #20 a = 1;
+    #20 a = 0;
+    #20 a = 1;
+
+    #120 $stop;
+end
+
+// generate clock
+always #5 trigger = ~trigger;
+
+// display values
+initial
+begin
+    $monitor("time=%0t A=%b Trigger=%b Q1=%b Q2=%b",
+              $time,a,trigger,q1,q2);
+end
+
+endmodule
